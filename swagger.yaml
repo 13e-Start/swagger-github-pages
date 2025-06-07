@@ -20,8 +20,12 @@ tags:
   description: 메타 데이터 API 입니다.
 - name: Company Auth API
   description: Company authentication 관련 API 입니다.
+- name: Company API
+  description: Company 관련 API 입니다.
 - name: Recruit API
   description: Company Recruit 관련 API 입니다.
+- name: All Post List API
+  description: 전체 공고 리스트 필터링 조회 API 입니다.
 - name: User API
   description: 사용자 관련 API 입니다.
 paths:
@@ -386,6 +390,27 @@ paths:
             "*/*":
               schema:
                 type: object
+  "/api/v1/resumes/{resumeSnapshotId}/status":
+    get:
+      tags:
+      - Resume API
+      summary: 이력서 지원 상태 확인
+      description: 이력서의 진행 상태와 최종 결과를 조회합니다.
+      operationId: getResumeStatus
+      parameters:
+      - name: resumeSnapshotId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/ResumeStatusDTO"
   "/api/v1/resumes/{resumeId}":
     get:
       tags:
@@ -423,27 +448,6 @@ paths:
       responses:
         '200':
           description: OK
-  "/api/v1/resumes/{resumeId}/status":
-    get:
-      tags:
-      - Resume API
-      summary: 이력서 지원 상태 확인
-      description: 이력서의 진행 상태와 최종 결과를 조회합니다.
-      operationId: getResumeStatus
-      parameters:
-      - name: resumeId
-        in: path
-        required: true
-        schema:
-          type: integer
-          format: int64
-      responses:
-        '200':
-          description: OK
-          content:
-            "*/*":
-              schema:
-                "$ref": "#/components/schemas/ResumeStatusDTO"
   "/api/v1/resumes/submitted":
     get:
       tags:
@@ -476,6 +480,63 @@ paths:
                 type: array
                 items:
                   "$ref": "#/components/schemas/ResumePreviewDTO"
+  "/api/v1/recruit/search":
+    get:
+      tags:
+      - All Post List API
+      summary: Recruit Post List 필터링 조회
+      description: Recruit Post List를 필터링한 결과를 조회합니다.
+      operationId: searchRecruitPosts
+      parameters:
+      - name: regionIds
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: integer
+            format: int64
+      - name: positionIds
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: integer
+            format: int64
+      - name: positionCategoryIds
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: integer
+            format: int64
+      - name: educationIds
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: integer
+            format: int64
+      - name: benefitIds
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/RecruitPostPreviewDTO"
   "/api/v1/meta/Region":
     get:
       tags:
@@ -560,11 +621,64 @@ paths:
             "*/*":
               schema:
                 "$ref": "#/components/schemas/BenefitCategoryListResponseDTO"
+  "/api/v1/franchise/search":
+    get:
+      tags:
+      - All Post List API
+      summary: Franchise Post List 필터링 조회
+      description: Franchise Post List를 필터링한 결과를 조회합니다.
+      operationId: searchFranchisePosts
+      parameters:
+      - name: companyIds
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: integer
+            format: int64
+      - name: subscribe
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: maxInitialCost
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/FranchisePostPreviewDTO"
+  "/api/v1/company":
+    get:
+      tags:
+      - Company API
+      summary: Company 정보 조회
+      description: Company 정보를 조회합니다.
+      operationId: getCompanyId
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/CompanyInfoResponseDTO"
 components:
   schemas:
     UpdateResumeRequestDTO:
       type: object
       properties:
+        resumeId:
+          type: integer
+          format: int64
         title:
           type: string
         content:
@@ -572,28 +686,25 @@ components:
         highestLevelEducationId:
           type: integer
           format: int64
-        careers:
-          type: array
-          items:
-            "$ref": "#/components/schemas/UploadCareerRequestDTO"
         desiredEmployeeBenefitIds:
           type: array
           items:
             type: integer
-            format: int32
+            format: int64
         desiredPositionIds:
           type: array
           items:
             type: integer
-            format: int32
+            format: int64
         desiredRegionIds:
           type: array
           items:
             type: integer
-            format: int32
-        resumeId:
-          type: integer
-          format: int64
+            format: int64
+        careers:
+          type: array
+          items:
+            "$ref": "#/components/schemas/UploadCareerRequestDTO"
     UploadCareerRequestDTO:
       type: object
       properties:
@@ -676,28 +787,25 @@ components:
         highestLevelEducationId:
           type: integer
           format: int64
-        careers:
-          type: array
-          items:
-            "$ref": "#/components/schemas/UploadCareerRequestDTO"
         desiredEmployeeBenefitIds:
           type: array
           items:
             type: integer
-            format: int32
+            format: int64
         desiredPositionIds:
           type: array
           items:
             type: integer
-            format: int32
+            format: int64
         desiredRegionIds:
           type: array
           items:
             type: integer
-            format: int32
-        resumeId:
-          type: integer
-          format: int64
+            format: int64
+        careers:
+          type: array
+          items:
+            "$ref": "#/components/schemas/UploadCareerRequestDTO"
     LoginRequestDto:
       type: object
       properties:
@@ -744,12 +852,19 @@ components:
           type: string
         birthDate:
           type: string
-          format: date-time
+          format: date
         telNumber:
           type: string
         address:
           type: string
         profileImageUrl:
+          type: string
+    ResumeStatusDTO:
+      type: object
+      properties:
+        progressStatus:
+          type: string
+        finalResult:
           type: string
     CareerDTO:
       type: object
@@ -792,13 +907,6 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/CareerDTO"
-    ResumeStatusDTO:
-      type: object
-      properties:
-        progressStatus:
-          type: string
-        finalResult:
-          type: string
     SubmittedResumeResponseDTO:
       type: object
       properties:
@@ -824,6 +932,22 @@ components:
         title:
           type: string
         lastUpdatedAt:
+          type: string
+    RecruitPostPreviewDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        title:
+          type: string
+        companyName:
+          type: string
+        region:
+          type: string
+        position:
+          type: string
+        employmentType:
           type: string
     Region:
       type: object
@@ -919,6 +1043,43 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/EmployeeBenefitsCategory"
+    FranchisePostPreviewDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        title:
+          type: string
+        companyName:
+          type: string
+        subscribe:
+          type: string
+        initialCost:
+          type: string
+        contentImageUrl:
+          type: string
+    CompanyInfoResponseDTO:
+      type: object
+      properties:
+        name:
+          type: string
+          description: 기업명
+        employeeCount:
+          type: integer
+          description: 사원수
+          format: int32
+        foundedYear:
+          type: integer
+          description: 설립년도
+          format: int32
+        companyType:
+          type: string
+          description: 기업형태
+        symbolImageUrl:
+          type: string
+          description: 심볼 이미지
+      description: CompanyInfoResponse
     EmployeeBenefitDTO:
       type: object
       properties:
