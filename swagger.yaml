@@ -7,10 +7,475 @@ info:
 servers:
 - url: http://localhost:8080
   description: Generated server url
+security:
+- BearerAuth: []
 tags:
+- name: Auth API
+  description: authentication 관련 API 입니다.
 - name: MetaData API
   description: 메타 데이터 API 입니다.
+- name: Franchise API
+  description: Company Franchise 관련 API 입니다.
+- name: Resume API
+  description: 메타 데이터 API 입니다.
+- name: Company Auth API
+  description: Company authentication 관련 API 입니다.
+- name: Recruit API
+  description: Company Recruit 관련 API 입니다.
+- name: User API
+  description: 사용자 관련 API 입니다.
 paths:
+  "/api/v1/resumes":
+    put:
+      tags:
+      - Resume API
+      summary: Resume 업데이트
+      description: Resume를 업데이트합니다.
+      operationId: updateResume
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/UpdateResumeRequestDTO"
+        required: true
+      responses:
+        '200':
+          description: OK
+    post:
+      tags:
+      - Resume API
+      summary: Resume 업로드
+      description: Resume를 업로드 합니다.
+      operationId: uploadResume
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/UploadResumeRequestDTO"
+        required: true
+      responses:
+        '200':
+          description: OK
+  "/api/v1/company/recruit/{postId}":
+    get:
+      tags:
+      - Recruit API
+      summary: Recruit Post 생성
+      description: Recruit Post를 조회합니다.
+      operationId: getRecruitPost
+      parameters:
+      - name: postId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/RecruitPostDetailResponseDTO"
+    put:
+      tags:
+      - Recruit API
+      summary: Recruit Post 생성
+      description: Recruit Post를 업데이트합니다.
+      operationId: updateRecruitPost
+      parameters:
+      - name: postId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/RecruitPostRequestDTO"
+        required: true
+      responses:
+        '200':
+          description: OK
+    delete:
+      tags:
+      - Recruit API
+      summary: Recruit Post 생성
+      description: Recruit Post를 삭제합니다.
+      operationId: deleteRecruitPost
+      parameters:
+      - name: postId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+  "/api/v1/company/franchise":
+    get:
+      tags:
+      - Franchise API
+      summary: Franchise 정보 조회
+      description: Franchise 정보를 조회합니다.
+      operationId: getFranchise
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/FranchisePostDetailResponseDTO"
+    put:
+      tags:
+      - Franchise API
+      summary: Franchise 업데이트
+      description: Franchise 정보를 업데이트합니다.
+      operationId: updateFranchise
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/FranchisePostRequestDTO"
+        required: true
+      responses:
+        '200':
+          description: OK
+    post:
+      tags:
+      - Franchise API
+      summary: Franchise 생성
+      description: Franchise 를 생성합니다.
+      operationId: createFranchise
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/FranchisePostRequestDTO"
+        required: true
+      responses:
+        '200':
+          description: OK
+    delete:
+      tags:
+      - Franchise API
+      summary: Franchise 삭제
+      description: Franchise 정보를 삭제합니다.
+      operationId: deleteFranchise
+      responses:
+        '200':
+          description: OK
+  "/api/v1/signup":
+    post:
+      tags:
+      - Auth API
+      operationId: signup
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/SignupRequestDto"
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                type: object
+  "/api/v1/resumes/{resumeId}/submit":
+    post:
+      tags:
+      - Resume API
+      summary: Resume 제출
+      description: Resume를 제출 합니다.
+      operationId: submitResume
+      parameters:
+      - name: resumeId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      - name: recruitPostId
+        in: query
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+  "/api/v1/reissue":
+    post:
+      tags:
+      - Auth API
+      operationId: reissue
+      parameters:
+      - name: RefreshToken
+        in: cookie
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                type: object
+  "/api/v1/logout":
+    post:
+      tags:
+      - Auth API
+      operationId: logout
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                type: object
+  "/api/v1/login":
+    post:
+      tags:
+      - Auth API
+      operationId: login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/LoginRequestDto"
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/LoginResponseDto"
+  "/api/v1/company/signup":
+    post:
+      tags:
+      - Company Auth API
+      operationId: signup_1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/CompanySignupRequestDTO"
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                type: object
+  "/api/v1/company/reissue":
+    post:
+      tags:
+      - Company Auth API
+      operationId: reissue_1
+      parameters:
+      - name: RefreshToken
+        in: cookie
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                type: object
+  "/api/v1/company/recruit":
+    get:
+      tags:
+      - Recruit API
+      summary: Recruit Post List 조회
+      description: Recruit Post List를 조회합니다.
+      operationId: getAllRecruitPosts
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/RecruitPostDetailResponseDTO"
+    post:
+      tags:
+      - Recruit API
+      summary: Recruit Post 생성
+      description: Recruit Post를 생성합니다.
+      operationId: createRecruit
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/RecruitPostRequestDTO"
+        required: true
+      responses:
+        '200':
+          description: OK
+  "/api/v1/company/logout":
+    post:
+      tags:
+      - Company Auth API
+      operationId: logout_1
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                type: object
+  "/api/v1/company/login":
+    post:
+      tags:
+      - Company Auth API
+      operationId: login_1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/LoginRequestDto"
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/LoginResponseDto"
+  "/api/v1/user":
+    get:
+      tags:
+      - User API
+      summary: User 정보 조회
+      description: User 정보를 조회합니다.
+      operationId: getUserByToken
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/UserResponseDTO"
+  "/api/v1/signup/{username}":
+    get:
+      tags:
+      - Auth API
+      operationId: isExistedUsername
+      parameters:
+      - name: username
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                type: object
+  "/api/v1/resumes/{resumeId}":
+    get:
+      tags:
+      - Resume API
+      summary: 이력서 상세 조회
+      description: 이력서 상세 정보를 조회합니다.
+      operationId: getResumeDetail
+      parameters:
+      - name: resumeId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/ResumeDetailDTO"
+    delete:
+      tags:
+      - Resume API
+      summary: 이력서 삭제
+      description: 제출하지 않은 이력서를 삭제합니다.
+      operationId: deleteResume
+      parameters:
+      - name: resumeId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+  "/api/v1/resumes/{resumeId}/status":
+    get:
+      tags:
+      - Resume API
+      summary: 이력서 지원 상태 확인
+      description: 이력서의 진행 상태와 최종 결과를 조회합니다.
+      operationId: getResumeStatus
+      parameters:
+      - name: resumeId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/ResumeStatusDTO"
+  "/api/v1/resumes/submitted":
+    get:
+      tags:
+      - Resume API
+      summary: 제출한 이력서 목록 조회
+      description: 내가 제출한 이력서 목록을 조회합니다.
+      operationId: getSubmittedResumes
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/SubmittedResumeResponseDTO"
+  "/api/v1/resumes/my":
+    get:
+      tags:
+      - Resume API
+      summary: 작성한 이력서 목록 조회
+      description: 내가 작성한 모든 이력서를 조회합니다.
+      operationId: getMyResumes
+      responses:
+        '200':
+          description: OK
+          content:
+            "*/*":
+              schema:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/ResumePreviewDTO"
   "/api/v1/meta/Region":
     get:
       tags:
@@ -97,6 +562,269 @@ paths:
                 "$ref": "#/components/schemas/BenefitCategoryListResponseDTO"
 components:
   schemas:
+    UpdateResumeRequestDTO:
+      type: object
+      properties:
+        title:
+          type: string
+        content:
+          type: string
+        highestLevelEducationId:
+          type: integer
+          format: int64
+        careers:
+          type: array
+          items:
+            "$ref": "#/components/schemas/UploadCareerRequestDTO"
+        desiredEmployeeBenefitIds:
+          type: array
+          items:
+            type: integer
+            format: int32
+        desiredPositionIds:
+          type: array
+          items:
+            type: integer
+            format: int32
+        desiredRegionIds:
+          type: array
+          items:
+            type: integer
+            format: int32
+        resumeId:
+          type: integer
+          format: int64
+    UploadCareerRequestDTO:
+      type: object
+      properties:
+        resumeId:
+          type: integer
+          format: int64
+        companyName:
+          type: string
+        jobTitle:
+          type: string
+        employmentPeriod:
+          type: string
+        jobPosition:
+          type: string
+    RecruitPostRequestDTO:
+      type: object
+      properties:
+        title:
+          type: string
+        employmentType:
+          type: string
+        location:
+          type: string
+        officeHour:
+          type: string
+        contentImageUrl:
+          type: string
+        regionId:
+          type: integer
+          format: int64
+        positionId:
+          type: integer
+          format: int64
+        positionCategoryId:
+          type: integer
+          format: int64
+        highestLevelEducationId:
+          type: integer
+          format: int64
+        benefitIds:
+          type: array
+          items:
+            type: integer
+            format: int64
+    FranchisePostRequestDTO:
+      type: object
+      properties:
+        title:
+          type: string
+        subscribe:
+          type: string
+        initialCost:
+          type: string
+        contentImageUrl:
+          type: string
+    SignupRequestDto:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+        name:
+          type: string
+        birthDate:
+          type: string
+        telNumber:
+          type: string
+        address:
+          type: string
+        profileImageUrl:
+          type: string
+    UploadResumeRequestDTO:
+      type: object
+      properties:
+        title:
+          type: string
+        content:
+          type: string
+        highestLevelEducationId:
+          type: integer
+          format: int64
+        careers:
+          type: array
+          items:
+            "$ref": "#/components/schemas/UploadCareerRequestDTO"
+        desiredEmployeeBenefitIds:
+          type: array
+          items:
+            type: integer
+            format: int32
+        desiredPositionIds:
+          type: array
+          items:
+            type: integer
+            format: int32
+        desiredRegionIds:
+          type: array
+          items:
+            type: integer
+            format: int32
+        resumeId:
+          type: integer
+          format: int64
+    LoginRequestDto:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+    LoginResponseDto:
+      type: object
+      properties:
+        accessToken:
+          type: string
+        refreshToken:
+          type: string
+    CompanySignupRequestDTO:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+        name:
+          type: string
+        businessNumber:
+          type: string
+        telNumber:
+          type: string
+        employeeCount:
+          type: integer
+          format: int32
+        foundedYear:
+          type: integer
+          format: int32
+        companyType:
+          type: string
+        symbolImageUrl:
+          type: string
+    UserResponseDTO:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        birthDate:
+          type: string
+          format: date-time
+        telNumber:
+          type: string
+        address:
+          type: string
+        profileImageUrl:
+          type: string
+    CareerDTO:
+      type: object
+      properties:
+        companyName:
+          type: string
+        jobTitle:
+          type: string
+        kobPosition:
+          type: string
+        employmentPeriod:
+          type: string
+    ResumeDetailDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        title:
+          type: string
+        content:
+          type: string
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+        regions:
+          type: array
+          items:
+            type: string
+        positions:
+          type: array
+          items:
+            type: string
+        benefits:
+          type: array
+          items:
+            type: string
+        careers:
+          type: array
+          items:
+            "$ref": "#/components/schemas/CareerDTO"
+    ResumeStatusDTO:
+      type: object
+      properties:
+        progressStatus:
+          type: string
+        finalResult:
+          type: string
+    SubmittedResumeResponseDTO:
+      type: object
+      properties:
+        resumeSnapshotId:
+          type: integer
+          format: int64
+        recruitTitle:
+          type: string
+        companyName:
+          type: string
+        submittedAt:
+          type: string
+        progressStatus:
+          type: string
+        finalResult:
+          type: string
+    ResumePreviewDTO:
+      type: object
+      properties:
+        resumeId:
+          type: integer
+          format: int64
+        title:
+          type: string
+        lastUpdatedAt:
+          type: string
     Region:
       type: object
       properties:
@@ -191,3 +919,50 @@ components:
           type: array
           items:
             "$ref": "#/components/schemas/EmployeeBenefitsCategory"
+    EmployeeBenefitDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+    RecruitPostDetailResponseDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        title:
+          type: string
+        employmentType:
+          type: string
+        location:
+          type: string
+        officeHour:
+          type: string
+        contentImageUrl:
+          type: string
+        benefits:
+          type: array
+          items:
+            "$ref": "#/components/schemas/EmployeeBenefitDTO"
+    FranchisePostDetailResponseDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        title:
+          type: string
+        subscribe:
+          type: string
+        initialCost:
+          type: string
+        contentImageUrl:
+          type: string
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
